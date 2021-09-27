@@ -23,6 +23,10 @@ steps:
     helmVersion: '3.7.0'
     installKubectl: true
 
+- task: DockerInstaller@0
+  inputs:
+    dockerVersion: '20.10.8'
+
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'vse'
