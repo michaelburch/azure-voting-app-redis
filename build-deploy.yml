@@ -10,11 +10,6 @@ resources:
 - repo: self
 
 variables:
-  # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '1a0330de-a427-4127-a368-291a5f99e4a0'
-  imageRepository: 'adoagent'
-  containerRegistry: 'demoacr50744.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/agent/Dockerfile'
   tag: '$(Build.BuildId)'
 
 steps: 
@@ -22,34 +17,3 @@ steps:
   inputs:
     helmVersion: '3.7.0'
     installKubectl: true
-
-
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'vse'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      az aks get-credentials -g gitops-demo-mgmt -n mgmtAks -a --overwrite; 
-      
-      REGISTRY=demoacr50744
-      TOKEN=$(az acr login -n $REGISTRY --expose-token --output tsv --query accessToken)
-      
-      cat << EOF > config.json
-      {
-          "auths": {
-              "$REGISTRY.azurecr.io": {
-                  "auth": "$TOKEN"
-              }
-          }
-      }
-      EOF
-      #kubectl get configmap
-      kubectl -n kaniko delete configmap acrdocker && kubectl -n kaniko create configmap acrdocker --from-file=config.json
-    addSpnToEnvironment: true
-
-- task: Kubernetes@1
-  inputs:
-    connectionType: 'None'
-    command: 'get'
-    arguments: 'namespace'
