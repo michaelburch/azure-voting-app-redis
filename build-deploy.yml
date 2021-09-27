@@ -23,26 +23,27 @@ steps:
     helmVersion: '3.7.0'
     installKubectl: true
 
-- task: DockerInstaller@0
-  inputs:
-    dockerVersion: '20.10.8'
-
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'vse'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az aks get-credentials -g gitops-demo-mgmt -n mgmtAks -a --overwrite;   REGISTRY=demoacr50744
-  TOKEN=$(az acr login -n $REGISTRY --expose-token --output tsv --query accessToken)
-  cat << EOF > config.json
-{
-    "auths": {
-        "$REGISTRY.azurecr.io": {
-            "auth": "$TOKEN"
-        }
-    }
-}
-EOF
-kubectl delete configmap acrdocker && kubectl create configmap acrdocker --from-file=config.json'
+    inlineScript: |
+      az aks get-credentials -g gitops-demo-mgmt -n mgmtAks -a --overwrite; 
+      
+      REGISTRY=demoacr50744
+      TOKEN=$(az acr login -n $REGISTRY --expose-token --output tsv --query accessToken)
+      
+      cat << EOF > config.json
+      {
+          "auths": {
+              "$REGISTRY.azurecr.io": {
+                  "auth": "$TOKEN"
+              }
+          }
+      }
+      EOF
+      
+      kubectl delete configmap acrdocker && kubectl create configmap acrdocker --from-file=config.json
     addSpnToEnvironment: true
 
