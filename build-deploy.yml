@@ -44,8 +44,8 @@ steps:
           }
       }
       EOF
-      kubectl get configmap
-      #kubectl delete configmap acrdocker && kubectl create configmap acrdocker --from-file=config.json
+      #kubectl get configmap
+      kubectl -n kaniko delete configmap acrdocker && kubectl -n kaniko create configmap acrdocker --from-file=config.json
     addSpnToEnvironment: true
 
 - task: Kubernetes@1
