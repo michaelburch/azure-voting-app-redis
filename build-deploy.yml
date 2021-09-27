@@ -22,11 +22,7 @@ steps:
   inputs:
     helmVersion: '3.7.0'
     installKubectl: true
-- task: Kubernetes@1
-  inputs:
-    connectionType: 'None'
-    command: 'get'
-    arguments: 'namespace'
+
 
 - task: AzureCLI@2
   inputs:
@@ -48,7 +44,12 @@ steps:
           }
       }
       EOF
-      cat config.json
+      kubectl get configmap
       #kubectl delete configmap acrdocker && kubectl create configmap acrdocker --from-file=config.json
     addSpnToEnvironment: true
 
+- task: Kubernetes@1
+  inputs:
+    connectionType: 'None'
+    command: 'get'
+    arguments: 'namespace'
