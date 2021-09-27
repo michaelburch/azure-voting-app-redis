@@ -22,6 +22,11 @@ steps:
   inputs:
     helmVersion: '3.7.0'
     installKubectl: true
+- task: Kubernetes@1
+  inputs:
+    connectionType: 'None'
+    command: 'get'
+    arguments: 'namespace'
 
 - task: AzureCLI@2
   inputs:
