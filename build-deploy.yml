@@ -32,6 +32,17 @@ steps:
     azureSubscription: 'vse'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az aks get-credentials -g gitops-demo-mgmt -n mgmtAks -a --overwrite; az acr login -n demoacr50744'
+    inlineScript: 'az aks get-credentials -g gitops-demo-mgmt -n mgmtAks -a --overwrite;   REGISTRY=demoacr50744
+  TOKEN=$(az acr login -n $REGISTRY --expose-token --output tsv --query accessToken)
+  cat << EOF > config.json
+{
+    "auths": {
+        "$REGISTRY.azurecr.io": {
+            "auth": "$TOKEN"
+        }
+    }
+}
+EOF
+kubectl delete configmap acrdocker && kubectl create configmap acrdocker --from-file=config.json'
     addSpnToEnvironment: true
 
