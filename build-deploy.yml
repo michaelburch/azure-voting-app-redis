@@ -1,0 +1,33 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger: none
+
+pool: agents-mgmt
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '1a0330de-a427-4127-a368-291a5f99e4a0'
+  imageRepository: 'adoagent'
+  containerRegistry: 'demoacr50744.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/agent/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+steps: 
+- task: HelmInstaller@0
+  inputs:
+    helmVersion: '3.7.0'
+    installKubectl: true
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'vse'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az aks get-credentials -g gitops-demo-mgmt -n mgmtAks -a --overwrite; az acr login -n demoacr50744'
+    addSpnToEnvironment: true
+
