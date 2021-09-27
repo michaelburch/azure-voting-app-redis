@@ -34,7 +34,7 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      az aks get-credentials -g gitops-demo-mgmt -n mgmtAks -a --overwrite; 
+      #az aks get-credentials -g gitops-demo-mgmt -n mgmtAks -a --overwrite; 
       
       REGISTRY=demoacr50744
       TOKEN=$(az acr login -n $REGISTRY --expose-token --output tsv --query accessToken)
