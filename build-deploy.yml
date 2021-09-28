@@ -5,7 +5,7 @@
 trigger: 
 - main
 
-pool: agents-mgmt
+pool: agents-app
 
 resources:
 - repo: self
